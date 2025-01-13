@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 from PIL import Image
 
 # Load the trained model
-pickle_in = open('model_pickel', 'rb')
+pickle_in = open('model_pickel.pkl', 'rb')
 classifier = pickle.load(pickle_in)
 
 # Feature columns used during training
