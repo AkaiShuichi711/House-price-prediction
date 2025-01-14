@@ -1,19 +1,147 @@
+# import streamlit as st
+# import pandas as pd
+# import numpy as np
+# import pickle
+
+# # Load the trained model
+# pickle_in = open('model_pickel.pkl', 'rb')
+# classifier = pickle.load(pickle_in)
+
+# import json
+
+# # Đọc danh sách cột từ file JSON
+# with open('columns.json', 'r') as f:
+#     feature_columns = json.load(f)
+
+
+# # Feature columns used during training
+# feature_columns = ['total_sqft', 'bath', 'bhk', '1st Phase JP Nagar', 'Whitefield', 'Electronic City', ...]
+
+# def predict_price(location, sqft, bath, bhk):
+#     """
+#     Predict the price of a house based on the given inputs.
+#     """
+#     # Initialize input array
+#     x = np.zeros(len(feature_columns))
+
+#     # Assign feature values
+#     x[0] = sqft
+#     x[1] = bath
+#     x[2] = bhk
+
+#     # Encode location
+#     if location in feature_columns:
+#         loc_index = feature_columns.index(location)
+#         x[loc_index] = 1
+#     else:
+#         raise ValueError(f"Location '{location}' is not recognized.")
+
+#     # Predict price
+#     return classifier.predict([x])[0]
+
+# def main():
+#     st.title("Bangalore House Price Prediction")
+#     st.markdown("<h2 style='color:black;text-align:left;'>Streamlit House Prediction ML App</h2>", unsafe_allow_html=True)
+    
+#     st.subheader('Please enter the required details:')
+#     location = st.selectbox("Location", feature_columns[3:])  # Choose location from dropdown
+#     sqft = st.text_input("Sq-ft area (numeric)", "")
+#     bath = st.text_input("Number of Bathrooms", "")
+#     bhk = st.text_input("Number of BHK", "")
+
+#     result = ""
+#     if st.button("Predict House Price (in Lakhs)"):
+#         try:
+#             sqft = float(sqft)
+#             bath = int(bath)
+#             bhk = int(bhk)
+#             result = predict_price(location, sqft, bath, bhk)
+#             st.success(f"The predicted price is: {result:.2f} Lakhs")
+#         except ValueError as e:
+#             st.error(str(e))
+
+#     if st.button("About"):
+#         st.text("Bangalore House Price Prediction App")
+#         st.text("Developed using Streamlit and Machine Learning.")
+
+# if __name__ == "__main__":
+#     main()
+
+
+
+# import pandas as pd
+# import numpy as np
+# import pickle
+# import json
+
+# # Load the trained model
+# with open('model_pickle.pkl', 'rb') as file:
+#     classifier = pickle.load(file)
+
+# # Load the feature columns
+# with open('columns.json', 'r') as f:
+#     feature_columns = json.load(f)
+
+# def predict_price(location, sqft, bath, bhk):
+#     """
+#     Predict the price of a house based on the given inputs.
+#     """
+#     # Initialize input array
+#     x = np.zeros(len(feature_columns))
+
+#     # Assign feature values
+#     x[0] = sqft
+#     x[1] = bath
+#     x[2] = bhk
+
+#     # Encode location
+#     if location in feature_columns:
+#         loc_index = feature_columns.index(location)
+#         x[loc_index] = 1
+#     else:
+#         raise ValueError(f"Location '{location}' is not recognized in the training data.")
+
+#     # Convert input to DataFrame
+#     x = pd.DataFrame([x], columns=feature_columns)  # Tạo DataFrame có tên feature
+    
+#     # Predict price
+#     return classifier.predict(x)[0]  # Truyền trực tiếp DataFrame mà không bọc thêm trong danh sách
+
+
+# def main():
+#     print("Bangalore House Price Prediction")
+#     print("Enter the following details to predict the house price:")
+
+#     try:
+#         location = input("Enter location (e.g., '1st Phase JP Nagar'): ").strip()
+#         sqft = float(input("Enter total square feet (numeric): "))
+#         bath = int(input("Enter number of bathrooms: "))
+#         bhk = int(input("Enter number of BHK: "))
+
+#         result = predict_price(location, sqft, bath, bhk)
+#         print(f"\nThe predicted house price is: {result:.2f} Lakhs\n")
+#     except ValueError as e:
+#         print(f"Error: {e}")
+#     except Exception as e:
+#         print(f"Unexpected error: {e}")
+
+# if __name__ == "__main__":
+#     main()
+
+
 import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-from sklearn.ensemble import RandomForestRegressor
-from PIL import Image
+import json
 
 # Load the trained model
-pickle_in = open('model_pickel.pkl', 'rb')
-classifier = pickle.load(pickle_in)
+with open('model_pickle.pkl', 'rb') as file:
+    classifier = pickle.load(file)
 
-# Feature columns used during training
-feature_columns = ['total_sqft', 'bath', 'bhk'] + ['location1', 'location2', 'location3', '...']  # Replace with actual locations
-
-def Welcome():
-    return "WELCOME ALL!"
+# Load the feature columns
+with open('columns.json', 'r') as f:
+    feature_columns = json.load(f)
 
 def predict_price(location, sqft, bath, bhk):
     """
@@ -21,7 +149,7 @@ def predict_price(location, sqft, bath, bhk):
     """
     # Initialize input array
     x = np.zeros(len(feature_columns))
-    
+
     # Assign feature values
     x[0] = sqft
     x[1] = bath
@@ -31,46 +159,42 @@ def predict_price(location, sqft, bath, bhk):
     if location in feature_columns:
         loc_index = feature_columns.index(location)
         x[loc_index] = 1
+    else:
+        raise ValueError(f"Location '{location}' is not recognized in the training data.")
 
+    # Convert input to DataFrame
+    x = pd.DataFrame([x], columns=feature_columns)  # Tạo DataFrame có tên feature
+    
     # Predict price
-    return classifier.predict([x])[0]
+    return classifier.predict(x)[0]  # Truyền trực tiếp DataFrame mà không bọc thêm trong danh sách
 
 def main():
-    # App title and header
+    # Title and description
     st.title("Bangalore House Price Prediction")
-    html_temp = """
-    <h2 style="color:black;text-align:left;">Streamlit House Prediction ML App</h2>
-    """
-    st.markdown(html_temp, unsafe_allow_html=True)
-    
-    # Input fields
-    st.subheader('Please enter the required details:')
-    location = st.text_input("Location", "")
-    sqft = st.text_input("Sq-ft area (numeric)", "")
-    bath = st.text_input("Number of Bathrooms", "")
-    bhk = st.text_input("Number of BHK", "")
+    st.markdown("Please find the code at: https://github.com/AkaiShuichi711/House-price-prediction")
+    st.markdown(" ")
+    st.write("Enter the details below to predict the house price:")
 
-    result = ""
+    # User inputs
+    location = st.selectbox("Select Location", feature_columns[3:])
+    sqft = st.number_input("Enter Total Square Feet", min_value=0.0, step=0.1)
+    bath = st.number_input("Enter Number of Bathrooms", min_value=1, step=1)
+    bhk = st.number_input("Enter Number of BHK", min_value=1, step=1)
 
-    # Prediction button
-    if st.button("Predict House Price (in Lakhs)"):
+    # Button to predict
+    if st.button("Predict"):
         try:
-            # Convert inputs to numeric
-            sqft = float(sqft)
-            bath = int(bath)
-            bhk = int(bhk)
-
-            # Predict price
+            # Make prediction
             result = predict_price(location, sqft, bath, bhk)
-            st.success(f"The predicted price is: {result:.2f} Lakhs")
-        except ValueError:
-            st.error("Please enter valid numeric values for Sq-ft, Bathrooms, and BHK.")
+            st.success(f"Predicted price: {result:.2f} Lakhs")
+        except ValueError as e:
+            st.error(f"Error: {e}")
+        except Exception as e:
+            st.error(f"Unexpected Error: {e}")
     
-    # About button
-    if st.button("About"):
-        st.text("Bangalore House Price Prediction App")
-        st.text("Developed using Streamlit and Machine Learning.")
-        st.text("Find the code at: https://github.com/Lokeshrathi/Bangalore-house-s-rate")
+    
+
+
 
 if __name__ == "__main__":
     main()
