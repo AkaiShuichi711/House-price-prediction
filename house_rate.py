@@ -1,4 +1,4 @@
-
+#  PHIÊN BẢN CHẠY BẰNG TERMINAL COMAND ĐỂ TEST HÀM PREDICT
 # import pandas as pd
 # import numpy as np
 # import pickle
@@ -58,7 +58,7 @@
 # if __name__ == "__main__":
 #     main()
 
-
+#  PHIÊN BẢN CHẠY HOÀN THIỆN: CÓ UI (DEPLOY BẰNG STREAMLIT) VÀ TƯƠNG TÁC UI với DATA đã TRAIN
 import streamlit as st
 import pandas as pd
 import numpy as np
